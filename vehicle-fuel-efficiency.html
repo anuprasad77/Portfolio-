@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vehicle Fuel Efficiency Prediction — Case Study</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+    :root {
+      --font-display: 'Outfit', -apple-system, sans-serif;
+      --font-sans: 'Inter', -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+
+      --bg: #030712;
+      --surface: #111827;
+      --surface2: #1f2937;
+      --accent: #38bdf8;
+      --accent2: #818cf8;
+      --accent3: #f43f5e;
+      --text: #f9fafb;
+      --muted: #9ca3af;
+      --border: rgba(255, 255, 255, 0.08);
+      --glass-bg: rgba(17, 24, 39, 0.7);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; overflow-x: hidden; }
+    body { background: var(--bg); color: var(--text); font-family: var(--font-sans); overflow-x: hidden; line-height: 1.6; }
+
+    /* Navigation */
+    nav {
+      position: fixed; top: 0; width: 100%; z-index: 100;
+      background: var(--glass-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border); padding: 16px 5%;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .back-btn {
+      color: var(--text); text-decoration: none; font-weight: 500; font-family: var(--font-mono);
+      display: flex; align-items: center; gap: 8px; transition: color 0.3s;
+    }
+    .back-btn:hover { color: var(--accent); }
+
+    /* Layout */
+    .container {
+      max-width: 900px; margin: 0 auto; padding: 120px 24px 80px;
+    }
+    section { margin-bottom: 80px; }
+    
+    .section-tag {
+      font-family: var(--font-mono); font-size: 0.9rem; color: var(--accent); margin-bottom: 12px;
+      letter-spacing: 0.05em; text-transform: uppercase;
+    }
+    .title {
+      font-family: var(--font-display); font-size: 3rem; font-weight: 800; line-height: 1.1; margin-bottom: 24px;
+    }
+    .title em { font-style: normal; color: transparent; -webkit-text-stroke: 1px var(--accent); }
+    h2 { font-family: var(--font-display); font-size: 2rem; margin-bottom: 24px; font-weight: 600; color: #fff; }
+    h3 { font-family: var(--font-display); font-size: 1.5rem; margin-top: 40px; margin-bottom: 16px; color: #fff; }
+    
+    p { color: var(--muted); font-size: 1.1rem; margin-bottom: 24px; line-height: 1.7; }
+    ul, ol { color: var(--muted); font-size: 1.1rem; margin-bottom: 24px; line-height: 1.7; padding-left: 24px; }
+    li { margin-bottom: 8px; }
+
+    /* Highlight box */
+    .highlight-box {
+      background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--accent);
+      padding: 24px; border-radius: 0 8px 8px 0; margin-bottom: 32px;
+    }
+
+    /* Flowchart */
+    .flowchart { display: flex; flex-direction: column; align-items: center; gap: 12px; margin: 32px 0; }
+    .flow-box {
+      background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); padding: 16px 24px;
+      border-radius: 8px; color: var(--text); font-family: var(--font-mono); font-size: 0.95rem;
+      text-align: center; width: 100%; max-width: 400px; box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    }
+    .flow-box.highlight { border-color: var(--accent); color: var(--accent); background: rgba(56, 189, 248, 0.05); }
+    .flow-box.highlight2 { border-color: var(--accent2); color: var(--accent2); background: rgba(129, 140, 248, 0.05); }
+    .flow-arrow { color: var(--muted); font-size: 1.2rem; }
+    
+    /* Horizontal Flow for DFDs */
+    .h-flow { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 12px; margin: 32px 0; }
+    .h-flow .flow-box { max-width: 250px; }
+    .h-flow .flow-arrow { transform: rotate(-90deg); margin: 0 10px; }
+    @media(min-width: 768px) {
+      .h-flow .flow-arrow { transform: none; }
+    }
+
+    /* Code Snippet */
+    .code-block {
+      background: #1e1e1e; border: 1px solid var(--border); border-radius: 8px; padding: 24px; margin: 24px 0;
+      overflow-x: auto; font-family: 'Consolas', 'Courier New', monospace; font-size: 0.9rem; line-height: 1.5; color: #d4d4d4;
+    }
+    .cb-keyword { color: #569cd6; }
+    .cb-string { color: #ce9178; }
+    .cb-comment { color: #6a9955; }
+    .cb-function { color: #dcdcaa; }
+    .code-title {
+      font-family: var(--font-mono); font-size: 0.85rem; color: var(--muted); margin-bottom: -16px; margin-top: 24px; padding-left: 16px;
+    }
+
+    /* Images */
+    .img-placeholder {
+      width: 100%; height: 350px; background: var(--surface2); border: 1px dashed var(--border);
+      border-radius: 12px; display: flex; justify-content: center; align-items: center;
+      color: var(--muted); font-family: var(--font-mono); margin: 32px 0;
+    }
+
+    footer { text-align: center; padding: 40px; border-top: 1px solid var(--border); color: var(--muted); font-family: var(--font-mono); font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="back-btn">← Back to Portfolio</a>
+  </nav>
+
+  <div class="container">
+    <section>
+      <div class="section-tag">Case Study</div>
+      <h1 class="title">Vehicle Fuel <em>Efficiency</em> Prediction</h1>
+      
+      <div class="highlight-box">
+        <p style="margin-bottom: 0;"><strong>Project Objective:</strong> To develop a machine learning model that accurately predicts fuel efficiency (measured in Miles Per Gallon, MPG) using historical vehicle data. By analyzing the relationship between vehicle features and fuel consumption, the project aims to guide vehicle design and inform consumer choices.</p>
+      </div>
+
+      <h2>1. Introduction & Motivation</h2>
+      <p>Fuel efficiency is a crucial aspect of modern vehicle performance, influencing both cost-efficiency and environmental sustainability. Higher fuel efficiency means that a vehicle can travel further on the same amount of fuel, leading to reduced fuel costs and lower greenhouse gas emissions.</p>
+      <p>The motivation behind developing this fuel efficiency prediction model stems from several critical factors that impact both the automotive industry and consumers: rising fuel costs, environmental concerns, and regulatory pressures.</p>
+
+      <h2>2. Key Challenges</h2>
+      <ul>
+        <li><strong>Data Quality and Completeness:</strong> Handling missing values or incomplete records that can affect model performance.</li>
+        <li><strong>Feature Engineering:</strong> Identifying the most relevant features (like cylinders, displacement, horsepower, weight) and transforming/scaling them appropriately using techniques like One-Hot Encoding and Standard Scaling.</li>
+        <li><strong>Model Complexity:</strong> Balancing algorithm selection and hyperparameter tuning to avoid overfitting (where the model learns noise) or underfitting.</li>
+      </ul>
+
+      <h2>3. Methodology & Architecture</h2>
+      <p>The methodology outlines the systematic approach taken to develop, train, and evaluate the machine learning model.</p>
+      
+      <h3>System Flow Structure</h3>
+      <div class="flowchart">
+        <div class="flow-box">Data Collection</div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-box highlight">Data Pre-processing (Handle missing values, encode, scale)</div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-box">Split Dataset (Train / Test Data-sets)</div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-box highlight">Train Machine Learning Algorithms (Random Forest, SVM)</div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-box highlight2">Predict the MPG</div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-box">Evaluate Performance (MSE, R²)</div>
+      </div>
+
+      <h3>Data Structure Representation</h3>
+      <div class="h-flow">
+        <div class="flow-box">Training Sample<br><span style="font-size: 0.8rem; color:var(--muted)">Sampling with replacement</span></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box highlight">Training Sample Sets (1..k)<br><span style="font-size: 0.8rem; color:var(--muted)">Bootstrapping</span></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box highlight">Regression Trees (1..k)<br><span style="font-size: 0.8rem; color:var(--muted)">Random Forest</span></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box highlight2">Fuel Consumption Prediction Results</div>
+      </div>
+
+      <h2>4. Implementation Snippets</h2>
+      <p>The implementation was done in Python using Pandas for data manipulation and Scikit-Learn for machine learning. Below are snippets demonstrating data preprocessing and model training.</p>
+
+      <div class="code-title">Data Preprocessing</div>
+      <div class="code-block">
+<span class="cb-comment"># Drop rows with missing values</span>
+data.<span class="cb-function">dropna</span>(inplace=<span class="cb-keyword">True</span>)
+
+<span class="cb-comment"># One-hot encoding for categorical variables</span>
+data = pd.<span class="cb-function">get_dummies</span>(data, columns=[<span class="cb-string">'origin'</span>], drop_first=<span class="cb-keyword">True</span>)
+
+<span class="cb-comment"># Split features and target variable</span>
+X = data.<span class="cb-function">drop</span>(columns=[<span class="cb-string">'mpg'</span>, <span class="cb-string">'car_name'</span>])
+y = data[<span class="cb-string">'mpg'</span>]
+
+<span class="cb-comment"># Split data into training and testing sets</span>
+X_train, X_test, y_train, y_test = <span class="cb-function">train_test_split</span>(X, y, test_size=<span class="cb-string">0.2</span>, random_state=<span class="cb-string">42</span>)
+
+<span class="cb-comment"># Standardize the features</span>
+scaler = <span class="cb-function">StandardScaler</span>()
+X_train_scaled = scaler.<span class="cb-function">fit_transform</span>(X_train)
+X_test_scaled = scaler.<span class="cb-function">transform</span>(X_test)
+      </div>
+
+      <div class="code-title">Model Training & Evaluation (Random Forest)</div>
+      <div class="code-block">
+<span class="cb-comment"># Create and train the Random Forest model</span>
+rf_model = <span class="cb-function">RandomForestRegressor</span>(n_estimators=<span class="cb-string">100</span>, random_state=<span class="cb-string">42</span>)
+rf_model.<span class="cb-function">fit</span>(X_train_scaled, y_train)
+
+<span class="cb-comment"># Make predictions</span>
+y_pred = rf_model.<span class="cb-function">predict</span>(X_test_scaled)
+
+<span class="cb-comment"># Evaluate the model</span>
+mse = <span class="cb-function">mean_squared_error</span>(y_test, y_pred)
+r2 = <span class="cb-function">r2_score</span>(y_test, y_pred)
+<span class="cb-function">print</span>(<span class="cb-string">f"Mean Squared Error: {mse:.2f}"</span>)
+<span class="cb-function">print</span>(<span class="cb-string">f"R^2 Score: {r2:.2f}"</span>)
+
+<span class="cb-comment"># Feature importances</span>
+importances = rf_model.feature_importances_
+      </div>
+
+      <h2>5. Results</h2>
+      <p>The model demonstrated significant predictive power when estimating fuel efficiency. Using the Random Forest Regressor, the model achieved the following performance metrics on the test dataset:</p>
+      <ul>
+        <li><strong>Mean Squared Error (MSE):</strong> 5.81</li>
+        <li><strong>R² Score:</strong> 0.89</li>
+      </ul>
+
+
+
+      <h2>6. Conclusion & Future Enhancements</h2>
+      <p>By leveraging advanced algorithms such as Random Forest Regressor and Support Vector Machines (SVM), the project achieved notable accuracy in predicting fuel efficiency. The resulting model not only serves as a tool for predicting MPG but also highlights important features, aiding both consumers and manufacturers in optimizing vehicle designs.</p>
+      
+      <h3>Future Scope:</h3>
+      <ul>
+        <li><strong>Incorporating Additional Features:</strong> Including aerodynamics, tire pressure, and real-time driving conditions.</li>
+        <li><strong>Real-Time Predictions:</strong> Streaming data directly from vehicle telematics systems.</li>
+        <li><strong>Mobile App Deployment:</strong> Creating a user-friendly application for drivers to estimate their MPG on the go.</li>
+        <li><strong>Model Explainability:</strong> Further exploring interpretability tools (like SHAP values) to build trust with end-users.</li>
+      </ul>
+
+    </section>
+  </div>
+
+  <footer>
+    <div>© 2025 Anuprasad H A — All Rights Reserved</div>
+  </footer>
+</body>
+</html>

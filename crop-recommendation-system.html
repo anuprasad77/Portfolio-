@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crop Recommendation System — Case Study</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+    :root {
+      --font-display: 'Outfit', -apple-system, sans-serif;
+      --font-sans: 'Inter', -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+
+      --bg: #030712;
+      --surface: #111827;
+      --surface2: #1f2937;
+      --accent: #38bdf8;
+      --accent2: #818cf8;
+      --accent3: #f43f5e;
+      --text: #f9fafb;
+      --muted: #9ca3af;
+      --border: rgba(255, 255, 255, 0.08);
+      --glass-bg: rgba(17, 24, 39, 0.7);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; overflow-x: hidden; }
+    body { background: var(--bg); color: var(--text); font-family: var(--font-sans); overflow-x: hidden; line-height: 1.6; }
+
+    /* Navigation */
+    nav {
+      position: fixed; top: 0; width: 100%; z-index: 100;
+      background: var(--glass-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border); padding: 16px 5%;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .back-btn {
+      color: var(--text); text-decoration: none; font-weight: 500; font-family: var(--font-mono);
+      display: flex; align-items: center; gap: 8px; transition: color 0.3s;
+    }
+    .back-btn:hover { color: var(--accent); }
+
+    /* Layout */
+    .container {
+      max-width: 900px; margin: 0 auto; padding: 120px 24px 80px;
+    }
+    section { margin-bottom: 80px; }
+    
+    .section-tag {
+      font-family: var(--font-mono); font-size: 0.9rem; color: var(--accent); margin-bottom: 12px;
+      letter-spacing: 0.05em; text-transform: uppercase;
+    }
+    .title {
+      font-family: var(--font-display); font-size: 3rem; font-weight: 800; line-height: 1.1; margin-bottom: 24px;
+    }
+    .title em { font-style: normal; color: transparent; -webkit-text-stroke: 1px var(--accent); }
+    h2 { font-family: var(--font-display); font-size: 2rem; margin-bottom: 24px; font-weight: 600; color: #fff; }
+    h3 { font-family: var(--font-display); font-size: 1.5rem; margin-top: 40px; margin-bottom: 16px; color: #fff; }
+    
+    p { color: var(--muted); font-size: 1.1rem; margin-bottom: 24px; line-height: 1.7; }
+    ul, ol { color: var(--muted); font-size: 1.1rem; margin-bottom: 24px; line-height: 1.7; padding-left: 24px; }
+    li { margin-bottom: 8px; }
+
+    /* Highlight box */
+    .highlight-box {
+      background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--accent);
+      padding: 24px; border-radius: 0 8px 8px 0; margin-bottom: 32px;
+    }
+
+    /* Code Snippet */
+    .code-block {
+      background: #1e1e1e; border: 1px solid var(--border); border-radius: 8px; padding: 24px; margin: 24px 0;
+      overflow-x: auto; font-family: 'Consolas', 'Courier New', monospace; font-size: 0.9rem; line-height: 1.5; color: #d4d4d4;
+    }
+    .cb-keyword { color: #569cd6; }
+    .cb-string { color: #ce9178; }
+    .cb-comment { color: #6a9955; }
+    .cb-function { color: #dcdcaa; }
+    .code-title {
+      font-family: var(--font-mono); font-size: 0.85rem; color: var(--muted); margin-bottom: -16px; margin-top: 24px; padding-left: 16px;
+    }
+
+    /* Images */
+    .img-placeholder {
+      width: 100%; background: var(--surface2); border: 1px dashed var(--border);
+      border-radius: 12px; display: flex; justify-content: center; align-items: center;
+      color: var(--muted); font-family: var(--font-mono); margin: 32px 0;
+    }
+
+    footer { text-align: center; padding: 40px; border-top: 1px solid var(--border); color: var(--muted); font-family: var(--font-mono); font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="back-btn">← Back to Portfolio</a>
+  </nav>
+
+  <div class="container">
+    <section>
+      <div class="section-tag">Case Study</div>
+      <h1 class="title">Crop Recommendation <em>System</em></h1>
+      
+      <div class="highlight-box">
+        <p style="margin-bottom: 0;"><strong>Project Objective:</strong> To empower farmers by introducing a portable, data-driven machine learning system that recommends the most suitable crops to grow based on soil characteristics and weather conditions, ultimately aiming to increase agricultural productivity and reduce risk.</p>
+      </div>
+
+      <h2>1. Introduction & Motivation</h2>
+      <p>Agriculture is the most important aspect in terms of existence and the livelihood of humans. Evolution in farming techniques is crucial for improving the supply of food to a country’s GDP. More importantly, it should be easy for farmers to grow accurate and suitable crops without facing major risks or a loss in productivity.</p>
+      <p>To maintain sustainability in the rate and quality of production, we need to introduce noncomplex, portable strategies. By initiating data exchange between scientific and practical platforms, this project aims to bridge the gap between modern machine learning tools and everyday agricultural needs.</p>
+
+      <h2>2. Machine Learning Approach</h2>
+      <p>The core concept of this project defines that a respective crop should be recommended based on various relative parameters embedded in a structured dataset.</p>
+      
+      <h3>Key Features Extracted:</h3>
+      <ul>
+        <li><strong>Soil Characteristics:</strong> Nitrogen (N), Phosphorus (P), and Potassium (K) levels extracted from the soil through filtration processes.</li>
+        <li><strong>Weather Conditions:</strong> Historical and current climate parameters relevant to crop growth.</li>
+      </ul>
+
+      <h3>Algorithms & Techniques</h3>
+      <p>The dataset is split into training and testing subsets to evaluate multiple algorithms based on their accuracy. We used the following machine learning classification tools and dimensionality reduction techniques:</p>
+      <ul>
+        <li><strong>Classification Algorithms:</strong> Decision Tree, Random Forest, and K-Nearest Neighbors (KNN).</li>
+        <li><strong>Dimensionality Reduction:</strong> Principal Component Analysis (PCA) and Linear Discriminant Analysis (LDA).</li>
+        <li><strong>Validation:</strong> Cross-validation techniques to ensure model robustness.</li>
+      </ul>
+
+      <h2>3. System Flow</h2>
+      
+
+
+      <h2>4. Implementation Snippets</h2>
+      <p>The system was implemented using Python, specifically leveraging the Scikit-Learn library for classification and dimensionality reduction.</p>
+
+      <div class="code-title">Model Initialization (Placeholder)</div>
+      <div class="code-block">
+<span class="cb-comment"># Import required classification models</span>
+<span class="cb-keyword">from</span> sklearn.ensemble <span class="cb-keyword">import</span> RandomForestClassifier
+<span class="cb-keyword">from</span> sklearn.tree <span class="cb-keyword">import</span> DecisionTreeClassifier
+<span class="cb-keyword">from</span> sklearn.neighbors <span class="cb-keyword">import</span> KNeighborsClassifier
+
+<span class="cb-comment"># Import Dimensionality Reduction techniques</span>
+<span class="cb-keyword">from</span> sklearn.decomposition <span class="cb-keyword">import</span> PCA
+<span class="cb-keyword">from</span> sklearn.discriminant_analysis <span class="cb-keyword">import</span> LinearDiscriminantAnalysis <span class="cb-keyword">as</span> LDA
+
+<span class="cb-comment"># Initialize models for comparison</span>
+rf_classifier = <span class="cb-function">RandomForestClassifier</span>(random_state=<span class="cb-string">42</span>)
+dt_classifier = <span class="cb-function">DecisionTreeClassifier</span>(random_state=<span class="cb-string">42</span>)
+knn_classifier = <span class="cb-function">KNeighborsClassifier</span>(n_neighbors=<span class="cb-string">5</span>)
+
+<span class="cb-comment"># Note: Replace this block with your actual implementation snippets from Chapter 4!</span>
+      </div>
+
+      <h2>5. User Interface & Results</h2>
+      <p>The system provides an intuitive interface where users can input their soil composition and weather data to instantly receive an optimized crop recommendation.</p>
+
+
+
+    </section>
+  </div>
+
+  <footer>
+    <div>© 2025 Anuprasad H A — All Rights Reserved</div>
+  </footer>
+</body>
+</html>

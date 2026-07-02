@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Signs of the Palace — Case Study</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+    :root {
+      --font-display: 'Outfit', -apple-system, sans-serif;
+      --font-sans: 'Inter', -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+
+      --bg: #030712;
+      --surface: #111827;
+      --surface2: #1f2937;
+      --accent: #38bdf8;
+      --accent2: #818cf8;
+      --accent3: #f43f5e;
+      --text: #f9fafb;
+      --muted: #9ca3af;
+      --border: rgba(255, 255, 255, 0.08);
+      --glass-bg: rgba(17, 24, 39, 0.7);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; overflow-x: hidden; }
+    body { background: var(--bg); color: var(--text); font-family: var(--font-sans); overflow-x: hidden; line-height: 1.6; }
+
+    /* Navigation */
+    nav {
+      position: fixed; top: 0; width: 100%; z-index: 100;
+      background: var(--glass-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border); padding: 16px 5%;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .back-btn {
+      color: var(--text); text-decoration: none; font-weight: 500; font-family: var(--font-mono);
+      display: flex; align-items: center; gap: 8px; transition: color 0.3s;
+    }
+    .back-btn:hover { color: var(--accent); }
+
+    /* Layout */
+    .container {
+      max-width: 900px; margin: 0 auto; padding: 120px 24px 80px;
+    }
+    section { margin-bottom: 80px; }
+    
+    .section-tag {
+      font-family: var(--font-mono); font-size: 0.9rem; color: var(--accent); margin-bottom: 12px;
+      letter-spacing: 0.05em; text-transform: uppercase;
+    }
+    .title {
+      font-family: var(--font-display); font-size: 3rem; font-weight: 800; line-height: 1.1; margin-bottom: 24px;
+    }
+    .title em { font-style: normal; color: transparent; -webkit-text-stroke: 1px var(--accent); }
+    h2 { font-family: var(--font-display); font-size: 2rem; margin-bottom: 24px; font-weight: 600; color: #fff; }
+    h3 { font-family: var(--font-display); font-size: 1.5rem; margin-top: 40px; margin-bottom: 16px; color: #fff; }
+    
+    p { color: var(--muted); font-size: 1.1rem; margin-bottom: 24px; line-height: 1.7; }
+    ul, ol { color: var(--muted); font-size: 1.1rem; margin-bottom: 24px; line-height: 1.7; padding-left: 24px; }
+    li { margin-bottom: 8px; }
+
+    /* Highlight box */
+    .highlight-box {
+      background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--accent);
+      padding: 24px; border-radius: 0 8px 8px 0; margin-bottom: 32px;
+    }
+
+    /* Images */
+    .img-placeholder {
+      width: 100%; height: 350px; background: var(--surface2); border: 1px dashed var(--border);
+      border-radius: 12px; display: flex; justify-content: center; align-items: center;
+      color: var(--muted); font-family: var(--font-mono); margin: 32px 0;
+    }
+    img.actual-img {
+      width: 100%; border-radius: 12px; border: 1px solid var(--border); margin: 32px 0;
+    }
+
+    /* Flowchart */
+    .flowchart { display: flex; flex-direction: column; align-items: center; gap: 12px; margin: 32px 0; }
+    .flow-box {
+      background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); padding: 16px 24px;
+      border-radius: 8px; color: var(--text); font-family: var(--font-mono); font-size: 0.95rem;
+      text-align: center; width: 100%; max-width: 400px; box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    }
+    .flow-box.highlight { border-color: var(--accent); color: var(--accent); background: rgba(56, 189, 248, 0.05); }
+    .flow-box.highlight2 { border-color: var(--accent2); color: var(--accent2); background: rgba(129, 140, 248, 0.05); }
+    .flow-arrow { color: var(--muted); font-size: 1.2rem; }
+    
+    /* Horizontal Flow for DFDs */
+    .h-flow { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 12px; margin: 32px 0; }
+    .h-flow .flow-box { max-width: 250px; }
+    .h-flow .flow-arrow { transform: rotate(-90deg); margin: 0 10px; }
+    @media(min-width: 768px) {
+      .h-flow .flow-arrow { transform: none; }
+    }
+
+    /* Code Snippet */
+    .code-block {
+      background: #1e1e1e; border: 1px solid var(--border); border-radius: 8px; padding: 24px; margin: 24px 0;
+      overflow-x: auto; font-family: 'Consolas', 'Courier New', monospace; font-size: 0.9rem; line-height: 1.5; color: #d4d4d4;
+    }
+    .cb-keyword { color: #569cd6; }
+    .cb-string { color: #ce9178; }
+    .cb-comment { color: #6a9955; }
+    .cb-function { color: #dcdcaa; }
+    .code-title {
+      font-family: var(--font-mono); font-size: 0.85rem; color: var(--muted); margin-bottom: -16px; margin-top: 24px; padding-left: 16px;
+    }
+    
+    footer { text-align: center; padding: 40px; border-top: 1px solid var(--border); color: var(--muted); font-family: var(--font-mono); font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="back-btn">← Back to Portfolio</a>
+  </nav>
+
+  <div class="container">
+    <section>
+      <div class="section-tag">Case Study</div>
+      <h1 class="title">Signs of the Palace <em>Recognition</em> Using Machine Learning Algorithms</h1>
+      
+      <div class="highlight-box">
+        <p style="margin-bottom: 0;"><strong>"Signs of the Palace"</strong> is an easy-to-use web app that helps people communicate palace-related ideas using Indian Sign Language (ISL). It's especially helpful for those who are hearing or speech impaired, making it easier for them to share and learn about historical palaces through sign language.</p>
+      </div>
+
+      <h2>1. Introduction & Motivation</h2>
+      <p>Sign language recognition (SLR) is an important research area that helps bridge communication gaps. Most initial introductions of sign language detection are largely oriented toward popular sign languages like ASL or general ISL. As a result, a great number of culturally coded and region-specific gestures are overlooked.</p>
+      <p>This project focuses directly on <strong>Palace Sign Language (PSL)</strong>—a system of signs denoting royal artifacts, rituals, and symbols linked with Mysore Palace (e.g., Ambari, the Crown, the Sword, the Elephant). By blending AI, video technology, and a love for culture, this project opens up new ways for everyone to explore and celebrate history, making it accessible and engaging.</p>
+
+      <h2>2. The Dataset</h2>
+      <p>The dataset used in the "Signs of the Palace" project is a custom-created video dataset specifically focused on 29 palace-related objects and symbols.</p>
+      <ul>
+        <li><strong>29 Classes:</strong> Includes "Mysore Palace", "King's Crown", "Sword", "Elephant", "Queen", "Main Gate", "Chamundeshwari", "Cannon", and many others.</li>
+        <li><strong>75 Videos per Class:</strong> Each clip is around 3 to 4 seconds long, recorded to maintain consistency in gesture style and clarity.</li>
+        <li><strong>Processing:</strong> The videos are processed at 2 frames per second (FPS), meaning exactly <strong>8 frames</strong> are extracted from each clip to feed into the deep learning model.</li>
+      </ul>
+      <p>Data augmentation (flipping, rotating, brightness adjusting) was applied to make the training material more robust.</p>
+
+      <h2>3. Methodology & Architecture</h2>
+      <p>The system utilizes a <strong>CNN + LSTM</strong> hybrid deep learning architecture. Convolutional Neural Networks (CNNs) are capitalized on to derive important spatial features (shapes, edges) out of video inputs, while Long Short-Term Memory (LSTM) networks capture the temporal motion patterns across frames.</p>
+      
+      <h3>Algorithm Flow</h3>
+      <div class="flowchart">
+        <div class="flow-box">Upload Video Clip</div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-box highlight">Extract Video Frames (8 frames)</div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-box">Preprocess Frames (resize to 112x112, normalize)</div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-box highlight">Predict Using CNN + LSTM Model (sign_language_augmented.h5)</div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-box">Output: Predict Class (e.g., King's Crown)</div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-box highlight2">Display Prediction + Historical Description</div>
+      </div>
+
+      <h3>Level 1 Data Flow Diagram (DFD)</h3>
+      <div class="h-flow">
+        <div class="flow-box">User<br><span style="font-size: 0.8rem; color:var(--muted)">Provides Video Input</span></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box highlight">Feature Extraction<br><span style="font-size: 0.8rem; color:var(--muted)">(CNN)</span></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box highlight2">Sign Recognition Model<br><span style="font-size: 0.8rem; color:var(--muted)">(LSTM)</span></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box">Text Output<br><span style="font-size: 0.8rem; color:var(--muted)">Class + Description</span></div>
+      </div>
+
+      <h2>4. Implementation Snippets</h2>
+      <p>The backend is powered by a Flask server. Here are some of the core implementation scripts that drive the processing and model predictions.</p>
+
+      <div class="code-title">App.py (Prediction Logic)</div>
+      <div class="code-block">
+<span class="cb-keyword">import</span> cv2
+<span class="cb-keyword">import</span> numpy <span class="cb-keyword">as</span> np
+<span class="cb-keyword">import</span> tensorflow <span class="cb-keyword">as</span> tf
+
+<span class="cb-comment"># Load Model & Class Names</span>
+model = tf.keras.models.<span class="cb-function">load_model</span>(<span class="cb-string">"sign_language_model_augmented.h5"</span>)
+
+<span class="cb-keyword">def</span> <span class="cb-function">predict_video</span>(video_path):
+    <span class="cb-comment"># Extract 8 evenly spaced frames</span>
+    frames = <span class="cb-function">extract_frames</span>(video_path, num_frames=<span class="cb-string">8</span>)
+    
+    <span class="cb-keyword">if not</span> frames:
+        <span class="cb-keyword">return</span> <span class="cb-string">"Error: Not enough frames"</span>
+
+    <span class="cb-comment"># Preprocess (Resize 112x112 and Normalize)</span>
+    processed_frames = []
+    <span class="cb-keyword">for</span> frame <span class="cb-keyword">in</span> frames:
+        resized = cv2.<span class="cb-function">resize</span>(frame, (<span class="cb-string">112</span>, <span class="cb-string">112</span>))
+        processed_frames.<span class="cb-function">append</span>(resized / <span class="cb-string">255.0</span>)
+    
+    <span class="cb-comment"># Add batch dimension for model input</span>
+    input_data = np.<span class="cb-function">expand_dims</span>(processed_frames, axis=<span class="cb-string">0</span>)
+    
+    <span class="cb-comment"># Predict</span>
+    prediction = model.<span class="cb-function">predict</span>(input_data)
+    class_idx = np.<span class="cb-function">argmax</span>(prediction)
+    
+    <span class="cb-keyword">return</span> class_names[class_idx]
+      </div>
+
+      <div class="code-title">Description.py (Data Dictionary)</div>
+      <div class="code-block">
+<span class="cb-comment"># A dictionary that stores detailed descriptions for the 29 classes.</span>
+descriptions = {
+    <span class="cb-string">"mysore palace"</span>: <span class="cb-string">"The Mysore Palace, also known as Amba Vilas Palace, was originally built in the 14th century but was rebuilt in its present form in 1912..."</span>,
+    <span class="cb-string">"ambari"</span>: <span class="cb-string">"The Mysore Ambari, also known as the Golden Howdah, is a magnificent, gold-plated wooden structure used during the Dasara festival..."</span>,
+    <span class="cb-string">"king crown"</span>: <span class="cb-string">"The Raja Mudi was a jewel-encrusted coronation crown presented to newly installed Maharajas of the Wadiyar dynasty..."</span>,
+    <span class="cb-string">"sword"</span>: <span class="cb-string">"The Mysore Palace houses several notable swords, with Tipu Sultan's sword being a prominent example..."</span>
+}
+      </div>
+
+      <h2>5. Results and UI</h2>
+      <p>The system was trained using 80% of the dataset (1950 videos) and tested on the remaining 10% (225 videos). The model achieved a high accuracy of over <strong>93%</strong>, showing strong generalization.</p>
+      
+      <p>The frontend interface allows users to upload a video showing palace-related gestures. Once uploaded, the video is sent to the Flask server for prediction. The result is displayed dynamically on the page, showing:</p>
+      <ul>
+        <li>The predicted class name (e.g., "Ambari").</li>
+        <li>An authentic image of the historical object.</li>
+        <li>A styled paragraph box containing the detailed cultural and historical description from `Description.py`.</li>
+      </ul>
+      <p>This makes the result both visually informative and user-friendly, blending heritage education with smooth web functionality.</p>
+
+
+
+      <h2>6. Conclusion & Future Enhancements</h2>
+      <p>The project successfully demonstrates how deep learning can be integrated with cultural education to interpret sign gestures representing historical elements of the Mysore Palace. It showcases the power of AI in recognizing temporal gestures while preserving and promoting regional heritage in an interactive way.</p>
+      
+      <h3>Future Scope:</h3>
+      <ul>
+        <li><strong>Real-Time Gesture Recognition:</strong> Integrate webcam-based live gesture recognition to eliminate the need for uploading pre-recorded videos.</li>
+        <li><strong>Mobile App Deployment:</strong> Develop a cross-platform mobile application (using Flutter or React Native) for easier and more portable user access.</li>
+        <li><strong>Multilingual Support:</strong> Display gesture class descriptions in multiple languages, including Kannada, Hindi, and English.</li>
+        <li><strong>Expanded Dataset:</strong> Include more historical objects, figures, and places related to South Indian heritage.</li>
+      </ul>
+
+    </section>
+  </div>
+
+  <footer>
+    <div>© 2025 Anuprasad H A — All Rights Reserved</div>
+  </footer>
+</body>
+</html>

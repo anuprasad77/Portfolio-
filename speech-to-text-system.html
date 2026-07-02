@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Speech-to-Text & TTS System — Case Study</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+    :root {
+      --font-display: 'Outfit', -apple-system, sans-serif;
+      --font-sans: 'Inter', -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+
+      --bg: #030712;
+      --surface: #111827;
+      --surface2: #1f2937;
+      --accent: #38bdf8;
+      --accent2: #818cf8;
+      --accent3: #f43f5e;
+      --text: #f9fafb;
+      --muted: #9ca3af;
+      --border: rgba(255, 255, 255, 0.08);
+      --glass-bg: rgba(17, 24, 39, 0.7);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; overflow-x: hidden; }
+    body { background: var(--bg); color: var(--text); font-family: var(--font-sans); overflow-x: hidden; line-height: 1.6; }
+
+    /* Navigation */
+    nav {
+      position: fixed; top: 0; width: 100%; z-index: 100;
+      background: var(--glass-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border); padding: 16px 5%;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .back-btn {
+      color: var(--text); text-decoration: none; font-weight: 500; font-family: var(--font-mono);
+      display: flex; align-items: center; gap: 8px; transition: color 0.3s;
+    }
+    .back-btn:hover { color: var(--accent); }
+
+    /* Layout */
+    .container {
+      max-width: 900px; margin: 0 auto; padding: 120px 24px 80px;
+    }
+    section { margin-bottom: 80px; }
+    
+    .section-tag {
+      font-family: var(--font-mono); font-size: 0.9rem; color: var(--accent); margin-bottom: 12px;
+      letter-spacing: 0.05em; text-transform: uppercase;
+    }
+    .title {
+      font-family: var(--font-display); font-size: 3rem; font-weight: 800; line-height: 1.1; margin-bottom: 24px;
+    }
+    .title em { font-style: normal; color: transparent; -webkit-text-stroke: 1px var(--accent); }
+    h2 { font-family: var(--font-display); font-size: 2rem; margin-bottom: 24px; font-weight: 600; color: #fff; }
+    h3 { font-family: var(--font-display); font-size: 1.5rem; margin-top: 40px; margin-bottom: 16px; color: #fff; }
+    
+    p { color: var(--muted); font-size: 1.1rem; margin-bottom: 24px; line-height: 1.7; }
+    ul, ol { color: var(--muted); font-size: 1.1rem; margin-bottom: 24px; line-height: 1.7; padding-left: 24px; }
+    li { margin-bottom: 8px; }
+
+    /* Highlight box */
+    .highlight-box {
+      background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--accent);
+      padding: 24px; border-radius: 0 8px 8px 0; margin-bottom: 32px;
+    }
+
+    /* Flowchart */
+    .flowchart { display: flex; flex-direction: column; align-items: center; gap: 12px; margin: 32px 0; }
+    .flow-box {
+      background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); padding: 16px 24px;
+      border-radius: 8px; color: var(--text); font-family: var(--font-mono); font-size: 0.95rem;
+      text-align: center; width: 100%; max-width: 400px; box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    }
+    .flow-box.highlight { border-color: var(--accent); color: var(--accent); background: rgba(56, 189, 248, 0.05); }
+    .flow-box.highlight2 { border-color: var(--accent2); color: var(--accent2); background: rgba(129, 140, 248, 0.05); }
+    .flow-arrow { color: var(--muted); font-size: 1.2rem; }
+    
+    /* Horizontal Flow for DFDs */
+    .h-flow { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 12px; margin: 32px 0; }
+    .h-flow .flow-box { max-width: 250px; }
+    .h-flow .flow-arrow { transform: rotate(-90deg); margin: 0 10px; }
+    @media(min-width: 768px) {
+      .h-flow .flow-arrow { transform: none; }
+    }
+
+    /* Code Snippet */
+    .code-block {
+      background: #1e1e1e; border: 1px solid var(--border); border-radius: 8px; padding: 24px; margin: 24px 0;
+      overflow-x: auto; font-family: 'Consolas', 'Courier New', monospace; font-size: 0.9rem; line-height: 1.5; color: #d4d4d4;
+    }
+    .cb-keyword { color: #569cd6; }
+    .cb-string { color: #ce9178; }
+    .cb-comment { color: #6a9955; }
+    .cb-function { color: #dcdcaa; }
+    .code-title {
+      font-family: var(--font-mono); font-size: 0.85rem; color: var(--muted); margin-bottom: -16px; margin-top: 24px; padding-left: 16px;
+    }
+
+    /* Images */
+    .img-placeholder {
+      width: 100%; background: var(--surface2); border: 1px dashed var(--border);
+      border-radius: 12px; display: flex; justify-content: center; align-items: center;
+      color: var(--muted); font-family: var(--font-mono); margin: 32px 0;
+    }
+
+    footer { text-align: center; padding: 40px; border-top: 1px solid var(--border); color: var(--muted); font-family: var(--font-mono); font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="back-btn">← Back to Portfolio</a>
+  </nav>
+
+  <div class="container">
+    <section>
+      <div class="section-tag">Case Study</div>
+      <h1 class="title">Speech-to-Text & <em>TTS</em> System</h1>
+      
+      <div class="highlight-box">
+        <p style="margin-bottom: 0;"><strong>Project Objective:</strong> To develop a comprehensive Python-based web application integrating both Speech-to-Text (STT) and Text-to-Speech (TTS) functionalities. This tool enhances accessibility for visually impaired users and bridges the gap between written and spoken language.</p>
+      </div>
+
+      <h2>1. Introduction & Motivation</h2>
+      <p>Text is one of the most basic forms of computer interaction, but providing naturalness through voice makes it significantly more effective. Speech Synthesis allows computing systems to convert written text to voice, while Speech-to-Text (ASR) allows spoken language to be transcribed into written text.</p>
+      <p>The motivation behind this project is to enhance accessibility and improve user experience by providing an intuitive interface for real-time transcription and expressive voice synthesis.</p>
+
+      <h2>2. Key Challenges</h2>
+      <p>Developing a robust system required overcoming several real-world obstacles in audio processing:</p>
+      <ul>
+        <li><strong>Accent and Dialect Variability:</strong> The STT engine must be robust enough to handle diverse pronunciations and varying regional accents.</li>
+        <li><strong>Background Noise:</strong> Ambient noise and overlapping speech can severely interfere with the audio signal, complicating transcription accuracy.</li>
+        <li><strong>Homophones & Context:</strong> Recognizing words that sound identical but possess different meanings relies heavily on understanding the surrounding context.</li>
+        <li><strong>Naturalness and Intonation:</strong> Generating TTS audio that sounds human-like, rather than robotic or monotonous.</li>
+      </ul>
+
+      <h2>3. Architecture & System Flow</h2>
+      
+      <h3>Streamlit App Processing Flow</h3>
+      <div class="flowchart">
+        <div class="flow-box">Streamlit App Initialization</div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-box highlight">Upload Audio File</div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-box">Save Uploaded File Temporarily</div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-box highlight2">Convert Speech to Text</div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-box highlight">Display Converted Text</div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-box">Delete Temporary File</div>
+      </div>
+
+      <h3>STT Data Flow Diagram</h3>
+      <div class="h-flow">
+        <div class="flow-box">Speech Signal</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box highlight">Feature Extraction</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box highlight">Acoustic / Language Model</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box highlight2">Hypothesis Search</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box">Recognition Result</div>
+      </div>
+
+      <h2>4. Implementation Snippets</h2>
+      <p>The application was built using Python, leveraging `gTTS` for voice generation, `SpeechRecognition` for transcription, and `Streamlit` to create a beautiful, interactive web interface.</p>
+
+      <div class="code-title">Speech-to-Text Conversion Module</div>
+      <div class="code-block">
+<span class="cb-keyword">import</span> speech_recognition <span class="cb-keyword">as</span> sr
+
+<span class="cb-keyword">def</span> <span class="cb-function">speech_to_text</span>(audio_file):
+    recognizer = sr.<span class="cb-function">Recognizer</span>()
+    <span class="cb-keyword">with</span> sr.<span class="cb-function">AudioFile</span>(audio_file) <span class="cb-keyword">as</span> source:
+        audio = recognizer.<span class="cb-function">record</span>(source)
+    <span class="cb-keyword">try</span>:
+        text = recognizer.<span class="cb-function">recognize_google</span>(audio)
+        <span class="cb-keyword">return</span> text
+    <span class="cb-keyword">except</span> sr.UnknownValueError:
+        <span class="cb-keyword">return</span> <span class="cb-string">"Google Speech Recognition could not understand the audio."</span>
+    <span class="cb-keyword">except</span> sr.RequestError:
+        <span class="cb-keyword">return</span> <span class="cb-string">"Could not request results from Google Speech Recognition service."</span>
+      </div>
+
+      <div class="code-title">Streamlit UI & Text-to-Speech Integration</div>
+      <div class="code-block">
+<span class="cb-keyword">import</span> streamlit <span class="cb-keyword">as</span> st
+<span class="cb-keyword">from</span> gtts <span class="cb-keyword">import</span> gTTS
+<span class="cb-keyword">import</span> io
+
+<span class="cb-keyword">if</span> option == <span class="cb-string">"Text-to-Speech"</span>:
+    text = st.<span class="cb-function">text_area</span>(<span class="cb-string">"Enter text to convert to speech:"</span>)
+    
+    lang = st.<span class="cb-function">selectbox</span>(<span class="cb-string">"Choose the language:"</span>, [<span class="cb-string">'en'</span>, <span class="cb-string">'kn'</span>, <span class="cb-string">'te'</span>, <span class="cb-string">'hi'</span>, <span class="cb-string">'ta'</span>])
+    gender = st.<span class="cb-function">radio</span>(<span class="cb-string">"Select Voice Gender:"</span>, (<span class="cb-string">"Female"</span>, <span class="cb-string">"Male"</span>))
+    
+    <span class="cb-keyword">if</span> st.<span class="cb-function">button</span>(<span class="cb-string">"Convert to Speech"</span>):
+        <span class="cb-keyword">if</span> text:
+            tts = <span class="cb-function">gTTS</span>(text=text, lang=lang)
+            
+            <span class="cb-comment"># Save the audio to a BytesIO object</span>
+            audio_bytes = io.<span class="cb-function">BytesIO</span>()
+            tts.<span class="cb-function">write_to_fp</span>(audio_bytes)
+            audio_bytes.<span class="cb-function">seek</span>(<span class="cb-string">0</span>)
+            
+            <span class="cb-comment"># Pitch manipulation logic based on gender...</span>
+            
+            st.<span class="cb-function">audio</span>(audio_bytes, format=<span class="cb-string">'audio/wav'</span>)
+      </div>
+
+      <h2>5. User Interface & Results</h2>
+      <p>The final Streamlit application provides an intuitive dashboard where users can easily toggle between Text-to-Speech and Speech-to-Text modes. They can customize the language (English, Kannada, Telugu, Hindi, Tamil) and adjust the voice gender.</p>
+
+
+
+      <h2>6. Conclusion & Future Enhancements</h2>
+      <p>This project successfully delivered a functional and integrated solution for speech-to-text and text-to-speech conversion. By addressing key challenges like multi-language support and intuitive UI design, it lays a strong foundation for future developments.</p>
+      
+      <h3>Future Scope:</h3>
+      <ul>
+        <li><strong>Improving Accuracy and Quality:</strong> Exploring more advanced acoustic models for noise filtering.</li>
+        <li><strong>Expanding Language and Dialect Support:</strong> Incorporating localized datasets to handle regional dialects more effectively.</li>
+        <li><strong>Performance and Scalability:</strong> Optimizing the Streamlit backend for concurrent users in a production environment.</li>
+      </ul>
+
+    </section>
+  </div>
+
+  <footer>
+    <div>© 2025 Anuprasad H A — All Rights Reserved</div>
+  </footer>
+</body>
+</html>
